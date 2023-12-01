@@ -101,8 +101,8 @@ is.factor(df$edu_cat)
 # Descriptive plots
 par(mar = c(5, 5, 2, 2)) # Change margins in plot manually
 vioplot(df$euftf_re ~ df$edu_cat)
-plot(df$edlvdie,df$euftf_re)
-plot(jitter(df$edlvdie,2),jitter(df$euftf_re,2))
+plot(df$eduyrs,df$euftf_re)
+plot(jitter(df$eduyrs,2),jitter(df$euftf_re,2))
 
 # Simple model only considering socio-demographic variables
 model_base <- lm(euftf_re~gndr + agea + brncntr, data=df)
@@ -142,7 +142,7 @@ legend(70, 10, # Legend
 # the lower the level of Euroscepticism
 
 # Continuous independent variable
-model1 <- lm(euftf_re~edlvdie,data=df)
+model1 <- lm(euftf_re~eduyrs,data=df)
 summary(model1)
 
 # What is the prediction equation?
@@ -161,6 +161,7 @@ df <- dummy_cols(df, select_columns = "edu_cat")
 
 # Fit model
 model1 <- lm(euftf_re~LeavingCertificate+AdvancedCertificate+Bachelor+Postgraduate,data=df)
+summary(model1)
 
 # Change reference category to leaving certificate 
 model1 <- lm(euftf_re~JuniorCycle+AdvancedCertificate+Bachelor+Postgraduate,data=df)
@@ -224,12 +225,12 @@ summary(model4)
 # (5) Putting it all together ------------
 
 # Education--Continuous independent variable
-model1 <- lm(euftf_re~edlvdie,data=df)
+model1 <- lm(euftf_re~eduyrs,data=df)
 summary(model1)
 nobs(model1) # Number of observations in model
 
 # Add economic dimension
-model_eco <- lm(euftf_re~edlvdie + hinctnta,data=df)
+model_eco <- lm(euftf_re~eduyrs + hinctnta,data=df)
 summary(model_eco)
 nobs(model_eco) # Number of observations in model
 # Default in lm to handle missing values is
@@ -246,30 +247,30 @@ df_na <- df[complete.cases(df), ]
 
 # Let's start again, using only complete cases (df_na)
 # Education--Continuous independent variable
-model1 <- lm(euftf_re~edlvdie,data=df_na)
+model1 <- lm(euftf_re~eduyrs,data=df_na)
 summary(model1)
 
 # Add economic dimension
-model_eco <- lm(euftf_re~edlvdie + hinctnta,data=df_na)
+model_eco <- lm(euftf_re~eduyrs + hinctnta,data=df_na)
 summary(model_eco)
 
 # What is the prediction equation?
 # Which interpretations can we make?
 
 # Add political dimension
-model_pol <- lm(euftf_re~edlvdie + hinctnta + trstplt, data=df_na)
+model_pol <- lm(euftf_re~eduyrs + hinctnta + trstplt, data=df_na)
 summary(model_pol)
 
 # Which interpretations can we make?
 
 # Add cultural dimension
-model_cul <- lm(euftf_re~edlvdie + hinctnta + trstplt + imwbcnt, data=df_na)
+model_cul <- lm(euftf_re~eduyrs + hinctnta + trstplt + imwbcnt, data=df_na)
 summary(model_cul)
 
 # Which interpretations can we make?
 
 # Add socio-economic variables 
-model_final <- lm(euftf_re~edlvdie + hinctnta + trstplt + imwbcnt + gndr + agea + brncntr, data=df_na)
+model_final <- lm(euftf_re~eduyrs + hinctnta + trstplt + imwbcnt + gndr + agea + brncntr, data=df_na)
 summary(model_final)
 
 # Which interpretations can we make?
@@ -292,7 +293,7 @@ anova(model1, model_pol, test='F')
 summary(model_pol)
 
 # What about political dimension alone?
-model3 <- lm(euftf_re~edlvdie+trstplt,data=df_na) # Refit with df_na
+model3 <- lm(euftf_re~eduyrs+trstplt,data=df_na) # Refit with df_na
 anova(model1, model3, test='F')
 
 # Does adding cultural dimension improve fit?
@@ -300,7 +301,7 @@ anova(model1, model_cul, test='F')
 summary(model_cul)
 
 # What about cultural dimension alone?
-model4 <- lm(euftf_re~edlvdie+imwbcnt,data=df_na) # Refit with df_na
+model4 <- lm(euftf_re~eduyrs+imwbcnt,data=df_na) # Refit with df_na
 anova(model1, model4, test='F')
 
 # Visualizing regression models with categorical independent variables 

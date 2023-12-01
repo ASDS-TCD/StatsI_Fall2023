@@ -82,23 +82,23 @@ model1 <- lm(euftf_re~edu_cat,data=df_na)
 summary(model1)
 
 # Education--Continuous independent variable
-model1 <- lm(euftf_re~edlvdie,data=df_na)
+model1 <- lm(euftf_re~eduyrs,data=df_na)
 summary(model1)
 
 # Add economic dimension
-model_eco <- lm(euftf_re~edlvdie + hinctnta,data=df_na)
+model_eco <- lm(euftf_re~eduyrs + hinctnta,data=df_na)
 summary(model_eco)
 
 # Add political dimension
-model_pol <- lm(euftf_re~edlvdie + hinctnta + trstplt, data=df_na)
+model_pol <- lm(euftf_re~eduyrs + hinctnta + trstplt, data=df_na)
 summary(model_pol)
 
 # Add cultural dimension
-model_cul <- lm(euftf_re~edlvdie + hinctnta + trstplt + imwbcnt, data=df_na)
+model_cul <- lm(euftf_re~eduyrs + hinctnta + trstplt + imwbcnt, data=df_na)
 summary(model_cul)
 
 # Add socio-economic variables 
-model_final <- lm(euftf_re~edlvdie + hinctnta + trstplt + imwbcnt + gndr + agea + brncntr, data=df_na)
+model_final <- lm(euftf_re~eduyrs + hinctnta + trstplt + imwbcnt + gndr + agea + brncntr, data=df_na)
 summary(model_final)
 
 # Get Latex table
@@ -121,7 +121,7 @@ anova(model1, model_pol, test='F')
 summary(model_pol)
 
 # What about political dimension alone?
-model3 <- lm(euftf_re~edlvdie+trstplt,data=df_na) 
+model3 <- lm(euftf_re~eduyrs+trstplt,data=df_na) 
 anova(model1, model3, test='F')
 summary(model3)
 
@@ -167,7 +167,7 @@ df_na$gndr <- ifelse(df_na$gndr == 2, 1, 0)
 df_na$gndr <- factor(df_na$gndr, labels = c("Male", "Female"))
 
 # Fit model
-model_int <- lm(euftf_re~edlvdie + 
+model_int <- lm(euftf_re~eduyrs + 
                          imwbcnt + 
                          gndr + 
                          imwbcnt*gndr, data=df_na)
@@ -190,20 +190,20 @@ emtrends(model_int, ~ gndr, var="imwbcnt")
 # Visualize estimated marginal means (EMMs)
 emmip(model_int, 
       gndr ~ imwbcnt,
-      at=list(imwbcnt=seq(0,10,by=1), gndr=c("Male","Female"), edlvdie=mean(df_na$edlvdie)),
+      at=list(imwbcnt=seq(0,10,by=1), gndr=c("Male","Female"), eduyrs=mean(df_na$eduyrs)),
       plotit = TRUE, 
       CIs = TRUE)
 
 # What does this function do?
 emmip(model_int, 
       gndr ~ imwbcnt,
-      at=list(imwbcnt=seq(0,10,by=1), gndr=c("Male","Female"), edlvdie=mean(df_na$edlvdie)),
+      at=list(imwbcnt=seq(0,10,by=1), gndr=c("Male","Female"), eduyrs=mean(df_na$eduyrs)),
       plotit = FALSE, 
       CIs = TRUE)
 
 # We can also use predict
 predict(model_int, 
-        newdata=data.frame(imwbcnt=0,gndr="Male",edlvdie=mean(df_na$edlvdie)))
+        newdata=data.frame(imwbcnt=0,gndr="Male",eduyrs=mean(df_na$eduyrs)))
 
 # Prediction equation from model with interaction term
 # 7.15015+0.01875*Education-0.47287*Attitudes-1.10277*Gender+0.16751*Attitudes*Gender
@@ -260,11 +260,11 @@ anova(model_no_int, model_int2)
 # (4) Quadratic effects -----------
 
 # A. Add a quadratic education term
-df_na$edlvdie_edlvdie <- df_na$edlvdie^2
+df_na$eduyrs_eduyrs <- df_na$eduyrs^2
 
 # Is the effect of education quadratic, rather than linear?
-model_quad <- lm(euftf_re~edlvdie + 
-                          edlvdie_edlvdie + 
+model_quad <- lm(euftf_re~eduyrs + 
+                          eduyrs_eduyrs + 
                           hinctnta + 
                           trstplt + 
                           imwbcnt, data=df_na)
@@ -273,13 +273,13 @@ summary(model_quad)
 # Visualize quadratic effect
 
 # Make predictions; How to specify new data?
-sort(unique(df_na$edlvdie))
-sort(unique(df_na$edlvdie_edlvdie))
+sort(unique(df_na$eduyrs))
+sort(unique(df_na$eduyrs_eduyrs))
 mean(df_na$hinctnta)
 
 # Define new data, for which to make predictions
-new_data = data.frame(edlvdie=sort(unique(df_na$edlvdie)), # Education
-                      edlvdie_edlvdie=sort(unique(df_na$edlvdie_edlvdie)), # Quadratic education term
+new_data = data.frame(eduyrs=sort(unique(df_na$eduyrs)), # Education
+                      eduyrs_eduyrs=sort(unique(df_na$eduyrs_eduyrs)), # Quadratic education term
                       hinctnta=mean(df_na$hinctnta), # Income
                       trstplt=mean(df_na$trstplt), # Political trust
                       imwbcnt=mean(df_na$imwbcnt)) # Attitudes towards immigration
@@ -291,14 +291,14 @@ preds
 
 # Scatter plot
 par(mar = c(5, 5, 2, 2)) # Change margins in plot manually
-plot(jitter(df_na$edlvdie,2),jitter(df_na$euftf,2))
-lines(sort(unique(df_na$edlvdie)),preds) # Add predicted outcomes
+plot(jitter(df_na$eduyrs,2),jitter(df_na$euftf,2))
+lines(sort(unique(df_na$eduyrs)),preds) # Add predicted outcomes
 
 # B. Add a quadratic income term
 df_na$hinctnta_hinctnta <- df_na$hinctnta^2
 
 # Is the effect of income quadratic, rather than linear?
-model_quad2 <- lm(euftf_re~edlvdie + 
+model_quad2 <- lm(euftf_re~eduyrs + 
                           hinctnta + 
                           hinctnta_hinctnta, 
                           data=df_na)
@@ -309,7 +309,7 @@ summary(model_quad2)
 # Define new data, for which to make predictions
 new_data = data.frame(hinctnta=sort(unique(df_na$hinctnta)), # Income
            hinctnta_hinctnta=sort(unique(df_na$hinctnta_hinctnta)), # Quadratic income term
-           edlvdie=mean(df_na$edlvdie)) # Education
+           eduyrs=mean(df_na$eduyrs)) # Education
 new_data
 
 # Make predictions for new data
