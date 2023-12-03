@@ -1,0 +1,218 @@
+---
+output:
+  word_document: default
+  pdf_document: default
+  html_document: default
+date: "2023-11-07"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,warning = FALSE, message = FALSE)
+```
+
+
+
+## Question 1
+
+
+1. Run a regression where the outcome variable is voteshare and the explanatory variable is difflog
+
+```{r}
+#read database from a 'csv'file
+data <- read.csv("incumbents_subset.csv")
+#draw a regression result from voteshare and difflog, use the imported database
+regression_result <- lm(voteshare ~ difflog, data = data)
+#use the function'summary'to see the main characters of of this regression result
+summary(regression_result)
+```
+
+
+
+
+
+2. Make a scatterplot of the two variables and add the regression line.
+
+
+
+```{r}
+#library the package'ggplot2'
+library(ggplot2)
+#use ggplot function to draw the plot of difflog and voteshare, and use the function geom_smooth to find the regression line
+ggplot(data, aes(x = difflog, y = voteshare)) +
+  geom_point() +                 
+  geom_smooth(method = "lm", se = FALSE, color = "blue") +  
+  labs(x = "difflog", y = "voteshare") + 
+  ggtitle("Scatterplot with Regression Line")  ## Add a title
+
+```
+
+
+
+
+
+3. Save the residuals of the model in a separate object. 
+
+```{r}
+## use resid function to save the residuals of the model in the 'residuals_model'object
+residuals_model <- resid(regression_result)
+
+```
+
+
+
+
+
+
+4. Write the prediction equation
+
+##write the prediction equation according to the summary of our regression result
+
+\[ \text{voteshare} = 0.579031 + 0.041666 \times \text{difflog} \]
+
+
+## Question 2
+
+
+
+1. Run a regression where the outcome variable is presvote and the explanatory variable is difflog. 
+
+```{r}
+#run a regression result about presvote and difflog, use the imported database as the data
+regression_result_presvote <- lm(presvote ~ difflog, data = data)
+#use the function summary to see the characters of the result
+summary(regression_result_presvote)
+```
+
+
+2. Make a scatterplot of the two variables and add the regression line.
+
+```{r}
+#use the ggplot function to draw a plot of difflog and presvote, and use geom_smooth function to get the regression line
+ ggplot(data, aes(x = difflog, y = presvote)) +
+  geom_point() +                 
+  geom_smooth(method = "lm", se = FALSE, color = "blue") +  
+  labs(x = "difflog", y = "presvote") + 
+  ggtitle("Scatterplot with Regression Line for presvote") ## Add the title
+```
+
+3. Save the residuals of the model in a separate object.
+
+```{r}
+#save the residuals of the model into the residuals_presvote as a separate object
+residuals_presvote <- resid(regression_result_presvote)
+```
+
+
+
+4. Write the prediction equation.
+
+##write the prediction equation according to the summary of our regression result
+\[\text{presvote} = 0.507583 + 0.023837 \times \text{difflog} \]
+
+
+
+## Question 3
+
+
+1. Run a regression where the outcome variable is voteshare and the explanatory variable is presvote.
+
+```{r}
+#run a regression by the lm function to get the regression of voteshare and presvote, use the imported database as our data
+regression_result_voteshare <- lm(voteshare ~ presvote, data = data)
+#use the summary function to get the characters of our regression result
+summary(regression_result_voteshare)
+
+```
+
+2. Make a scatterplot of the two variables and add the regression line.
+
+
+```{r}
+#use ggplot function to draw the plot of our regression, and use geom_smooth to get the regresion line for voteshare
+ggplot(data, aes(x = presvote, y = voteshare)) +
+  geom_point() +                 
+  geom_smooth(method = "lm", se = FALSE, color = "blue") +  
+  labs(x = "presvote", y = "voteshare") + 
+  ggtitle("Scatterplot with Regression Line for voteshare")##add the title
+```
+
+
+3. Write the prediction equation.
+
+
+##write the prediction equation according to the summary of our regression result
+\[\text{voteshare} = 0.441330 + 0.388018 \times \text{presvote} \]
+
+
+
+
+## Question 4
+
+
+1. Run a regression where the outcome variable is the residuals from Question 1 and the
+explanatory variable is the residuals from Question 2
+
+```{r}
+#use resid function to save the residuals of regression_result_voteshare
+residuals_voteshare <- resid(regression_result_voteshare)
+#run a regression of residuals_voteshare and resuals_presvote
+residuals_regression <- lm(residuals_voteshare ~ residuals_presvote)
+#use summary function to get the characters of this regression result
+summary(residuals_regression)
+```
+
+.
+2. Make a scatterplot of the two residuals and add the regression line.
+
+```{r}
+#use gglot to draw the scatterplot, we use data.frame with residuals_voteshare and residuals_presvote,and use geom_smooth to get our regression line
+ggplot(data.frame(Residuals_voteshare = residuals_voteshare, Residuals_presvote = residuals_presvote), 
+       aes(x = Residuals_presvote, y = Residuals_voteshare)) +
+  geom_point() +                
+  geom_smooth(method = "lm", se = FALSE, color = "blue") +
+  labs(x = "Residuals from Question 2", y = "Residuals from Question 1") +
+  ggtitle("Scatterplot of Residuals with Regression Line")##add a title
+
+```
+
+
+3. Write the prediction equation.
+##write the prediction equation according to the summary of our regression result
+\[residuals\_voteshare = -0.1311 \times residuals\_presvote \]
+
+
+
+
+## Question 5
+
+
+1. Run a regression where the outcome variable is the incumbents voteshare and the explanatory variables are difflog and presvote.
+
+```{r}
+#use the lm function to run a regression where the outcome variable is the incumbents voteshare and the explanatory variables are difflog and presvote
+regression_result_combined <- lm(voteshare ~ difflog + presvote, data = data)
+#use the summary function to get the characters of this regression result
+summary(regression_result_combined)
+
+```
+2. Write the prediction equation. 
+
+
+##write the prediction equation according to the summary of our regression result
+\[ \text{voteshare} = 0.4486442 + 0.0355431 \times \text{difflog} + 0.2568770 \times \text{presvote} \]
+
+
+3. What is it in this output that is identical to the output in Question 4? Why do you think this is the case?
+
+
+
+In the output of the regression where the outcome variable is the incumbent's `voteshare` and the explanatory variables are `difflog` and `presvote`, the part that is identical to the output in Question 4 is the residuals from `presvote` regressed on `difflog`. Specifically, the coefficient for `difflog` in the regression output is the same as the coefficient for `difflog` in Question 4.
+
+In Question 4, we performed a regression of the residuals from the model where `presvote` is the outcome variable and `difflog` is the explanatory variable. This means that the residuals from the relationship between `presvote` and `difflog` were calculated and then regressed on the residuals from the relationship between `voteshare` and `presvote`.
+
+In Question 5, we are directly regressing the incumbent's `voteshare` on both `difflog` and `presvote`. However, the coefficient for `difflog` in this regression is the same as the coefficient for `difflog` in Question 4 because it represents the relationship between `difflog` and the dependent variable in both cases.
+
+The reason for this similarity is that the coefficient for `difflog` captures the effect of `difflog` on the dependent variable, and this effect remains consistent across different models. In both Question 4 and Question 5, the coefficient for `difflog` quantifies how a one-unit change in `difflog` is associated with a change in the dependent variable (in this case, residuals from the dependent variable). So, the similarity arises because we are examining the same relationship in both cases, even though the context and models are different.
+```{r}
+
+```
